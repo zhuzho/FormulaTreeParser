@@ -1,17 +1,30 @@
-package com.tree.form.api.constant;
+package com.yunsom.form.api.constant;
 
-import com.tree.form.api.calculate.Avg;
-import com.tree.form.api.calculate.Divide;
-import com.tree.form.api.calculate.Minus;
-import com.tree.form.api.calculate.Multiply;
-import com.tree.form.api.calculate.Plus;
-import com.tree.form.api.calculate.Residue;
-import com.tree.form.api.calculate.Sum;
-import com.tree.form.api.service.MathCalculate;
-import com.tree.form.api.util.FunctionValidator;
-import com.tree.form.api.util.IfElseValidator;
-import com.tree.form.api.util.NormalMathValidator;
+import com.yunsom.form.api.calculate.AddDay;
+import com.yunsom.form.api.calculate.Avg;
+import com.yunsom.form.api.calculate.Count;
+import com.yunsom.form.api.calculate.DateDiff;
+import com.yunsom.form.api.calculate.Divide;
+import com.yunsom.form.api.calculate.Format;
+import com.yunsom.form.api.calculate.Max;
+import com.yunsom.form.api.calculate.Min;
+import com.yunsom.form.api.calculate.Minus;
+import com.yunsom.form.api.calculate.Multiply;
+import com.yunsom.form.api.calculate.Negative;
+import com.yunsom.form.api.calculate.Now;
+import com.yunsom.form.api.calculate.Plus;
+import com.yunsom.form.api.calculate.Residue;
+import com.yunsom.form.api.calculate.Sum;
+import com.yunsom.form.api.calculate.Today;
+import com.yunsom.form.api.calculate.WeekNum;
+import com.yunsom.form.api.service.MathCalculate;
+import com.yunsom.form.api.util.FunctionValidator;
+import com.yunsom.form.api.util.IfElseValidator;
+import com.yunsom.form.api.util.NormalMathValidator;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.springframework.util.StringUtils;
 
 /**
@@ -23,16 +36,17 @@ public enum FunctionEnum {
 
    PLUS("plus","+",new NormalMathValidator(),new Plus())
   ,MINUS("minus","-",new NormalMathValidator(),new Minus())
-      /**"乘",*/
   ,MULTIPLY("multiply","*",new NormalMathValidator(),new Multiply())
-      /**"除",*/
   ,DIVIDE("divide","/",new NormalMathValidator(),new Divide())
-    /**,"余"*/
   ,RESIDUE("residue","%",new NormalMathValidator(),new Residue())
   ,AVG("avg","avg",new NormalMathValidator(),new Avg())
   ,SUM("sum","sum",new NormalMathValidator(),new Sum())
+  ,COUNT("count","count",new NormalMathValidator(),new Count())
+  ,MAX("max","max",new NormalMathValidator(),new Max())
+  ,MIN("min","min",new NormalMathValidator(),new Min())
 
   ,IF_ELSE("ie","if",new IfElseValidator(),null)
+
   ,OR("or","||",null,null)
   ,AND("and","&&",null,null)
   ,GREATER_THAN("gt",">",null,null)
@@ -41,6 +55,16 @@ public enum FunctionEnum {
   ,NOT_EQUAL("ne","!=",null,null)
   ,LESS_THAN("lt","<",null,null)
   ,LESS_EQUAL("le","<=",null,null)
+
+  ,NEGATIVE("negative","negative",null,new Negative())
+  ,TODAY("today","today",null,new Today())
+  ,NOW("now","now",null,new Now())
+
+  ,ADD_DAY("addday","addday",null,new AddDay())
+  ,DATE_DIFF("datediff","datediff",null,new DateDiff())
+  ,WEEK_NUM("weeknum","weeknum",null,new WeekNum())
+  ,DATE_FORMAT("format","format",null,new Format())
+
   ;
 
   public final String method ;
@@ -76,6 +100,21 @@ public enum FunctionEnum {
     return null;
   }
 
+  public static List<String> getDiyFunc(){
+    return Arrays.stream(FunctionEnum.values())
+        .filter(tt->Objects.nonNull(tt.calculator))
+        .map(tt->tt.method)
+        .collect(Collectors.toList());
+  }
+
   public FunctionValidator getValidator() {
     return validator;
-  }}
+  }
+
+  public static List<FunctionEnum> aggregationFunc = Arrays.asList(AVG,SUM,COUNT,MAX,MIN);
+
+  public static List<FunctionEnum> arithmetic = Arrays.asList(
+      PLUS,MINUS,MULTIPLY,DIVIDE,RESIDUE,ADD_DAY,DATE_DIFF,WEEK_NUM,DATE_FORMAT
+  );
+
+}

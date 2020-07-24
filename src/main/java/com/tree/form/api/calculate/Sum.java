@@ -1,11 +1,13 @@
-package com.tree.form.api.calculate;
+package com.yunsom.form.api.calculate;
 
-import com.tree.form.api.constant.FunctionEnum;
+import com.yunsom.form.api.constant.FunctionEnum;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * @author zhuzhong@tree.com
+ * @author zhuzhong@yunsom.com
  * @date 2020-06-09 16:04
  * @description
  */
@@ -17,7 +19,16 @@ public class Sum extends MathFunctionHandle {
   }
 
   @Override
-  public BigDecimal calculate(List<BigDecimal> params) {
-    return FunctionEnum.PLUS.calculator.calculate(params);
+  public BigDecimal calculate(List  params) {
+    params = (List) params.stream().filter(Objects::nonNull
+    ).collect(Collectors.toList());
+    List newParams = getObject(params);
+    return (BigDecimal) FunctionEnum.PLUS.calculator.calculate(newParams);
+  }
+
+  @Override
+  public Object executeInner(Object[] objects)   {
+    List<Object> bigDecimals = convert(objects);
+    return this.calculate(bigDecimals);
   }
 }

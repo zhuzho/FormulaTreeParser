@@ -1,12 +1,13 @@
 package com.yunsom.form.api.calculate;
 
 import static com.yunsom.form.api.constant.FunctionEnum.MINUS;
-import static java.math.BigDecimal.ROUND_HALF_UP;
 
 import com.yunsom.form.api.constant.FunctionEnum;
 import com.yunsom.form.api.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author zhuzhong@yunsom.com
@@ -16,15 +17,23 @@ import java.util.List;
 public class Minus  extends MathFunctionHandle {
 
   @Override
-  public BigDecimal calculate(List<BigDecimal> params) {
-    if (CollectionUtils.isEmpty(params) || params.size()!=2){
-      return null;
+  public BigDecimal calculate(List params) {
+    needParamSize(params,2);
+    params = getBigDecimal(params);
+    if (!(params.get(0) instanceof BigDecimal) || !(params.get(1) instanceof BigDecimal)){
+      throwCalculate();
     }
-    return params.get(0).subtract(params.get(1));
+    return ((BigDecimal)params.get(0)).subtract((BigDecimal)params.get(1));
   }
 
   @Override
   public FunctionEnum func() {
     return MINUS;
   }
+
+
+  @Override
+  public Object executeInner(Object[] objects)  {
+    List<Object> bigDecimals = convert(objects);
+    return this.calculate(bigDecimals);  }
 }

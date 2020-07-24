@@ -6,6 +6,7 @@ import com.yunsom.form.api.constant.FunctionEnum;
 import com.yunsom.form.api.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author zhuzhong@yunsom.com
@@ -15,13 +16,27 @@ import java.util.List;
 public class Multiply extends MathFunctionHandle  {
 
   @Override
-  public BigDecimal calculate(List<BigDecimal> params) {
+  public BigDecimal calculate(List  params) {
     if (CollectionUtils.isEmpty(params)){
       return null;
     }
-    BigDecimal result = new BigDecimal(1);
-    for (BigDecimal bigDecimal:params){
-      result = result.multiply(bigDecimal);
+    if (params.size()==1){
+      throwCalculate();
+    }
+    params = getBigDecimal(params);
+    BigDecimal result = BigDecimal.valueOf(1);
+    for (Object bigDecimal:params){
+      if (Objects.isNull(bigDecimal)){
+        throwCalculate();
+      }
+      if (bigDecimal instanceof List ){
+        if (((List) bigDecimal).size()>1){
+          throwCalculate();
+        }
+        result = result.multiply((BigDecimal) ((List) bigDecimal).get(0));
+      }else{
+        result = result.multiply((BigDecimal) bigDecimal);
+      }
     }
     return result;
   }
@@ -30,4 +45,9 @@ public class Multiply extends MathFunctionHandle  {
   public FunctionEnum func() {
     return MULTIPLY;
   }
+
+  @Override
+  public Object executeInner(Object[] objects) {
+    List<Object> bigDecimals = convert(objects);
+    return this.calculate(bigDecimals);  }
 }

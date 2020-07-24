@@ -2,101 +2,154 @@ package com.yunsom.form.api.calculate;
 
 import static com.yunsom.form.api.constant.ResultCodeEnum.DEFINE_FORM_EXPRE_FUNC_INVALID_PARAM;
 
+import com.ql.util.express.Operator;
 import com.yunsom.common.base.exception.BusinessException;
 import com.yunsom.form.api.constant.FunctionEnum;
 import com.yunsom.form.api.constant.ResultCodeEnum;
 import com.yunsom.form.api.dto.Expression;
 import com.yunsom.form.api.service.MathCalculate;
 import com.yunsom.form.api.util.CollectionUtils;
+import com.yunsom.form.api.util.ParamParser;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author zhuzhong@yunsom.com
  * @date 2020-06-09 14:42
  * @description
  */
-public abstract class MathFunctionHandle implements MathCalculate {
+public abstract class MathFunctionHandle extends Operator implements MathCalculate {
 
-  public List<BigDecimal> calculate(List<Expression> params, Map<String, Object> paramVar){
-    List<BigDecimal> result = new ArrayList<>();
-    for (Expression expression:params){
-      List<BigDecimal>  bigDecimal = this.calculate(expression,paramVar);
-      if (CollectionUtils.isNotEmpty(bigDecimal)){
-        result.addAll(bigDecimal);
-      }
-    }
-    return result;
+  public List  calculate(List<Expression> params, Map<String, Object> paramVar,String calculateTableElement,Integer calculateTableRow){
+
+    return null;
   }
 
-  public List<BigDecimal> calculate(Expression expression, Map<String, Object> paramVar){
-    FunctionEnum functionEnum = FunctionEnum.get(expression.getFunc());
-    if (Objects.isNull(functionEnum)){
-      List<BigDecimal> bigDecimal = this.getNumber(expression,paramVar);
-      if (CollectionUtils.isNotEmpty(bigDecimal)){
+  public Object  calculate(Expression expression, Map<String, Object> paramVar,String calculateTableElement,Integer calculateTableRow){
+    FunctionEnum functionEnum ;
+    if (Objects.isNull(expression.getFunc())||Objects.isNull(functionEnum=FunctionEnum.get(expression.getFunc()))){
+      Object bigDecimal = this.getNumber(expression,paramVar);
+      if (Objects.nonNull(bigDecimal)){
         return bigDecimal;
       }
+      return null;
     }
     MathCalculate handle = functionEnum.calculator;
     if (Objects.nonNull(handle) && CollectionUtils.isNotEmpty(expression.getItems())){
-      List<BigDecimal> result =  handle.calculate(expression.getItems(),paramVar);
-      BigDecimal bigDecimal = handle.calculate(result);
-      return Objects.nonNull(bigDecimal)?Arrays.asList(bigDecimal):null;
+      List  result = new ArrayList<>();
+      Set<String> tableSet = (Set<String>) paramVar.get(calculateTableElement);
+      //表格內四则运算
+      for (int i=0;i<expression.getItems().size() ;i++){
+        Expression expr = expression.getItems().get(i);
+        if (FunctionEnum.arithmetic.contains(functionEnum)
+            && ParamParser.isElementVar(expr.getExpreVar())
+            && StringUtils.isNotEmpty(calculateTableElement)
+            && Objects.nonNull(calculateTableRow)){
+          if (CollectionUtils.isNotEmpty(tableSet)){
+            if (tableSet.contains(expr.getExpreVar())){
+              Object bigDecimal = this.getNumber(expr,paramVar);
+              if (Objects.isNull(bigDecimal)||!(bigDecimal instanceof Collection)){
+                throwCalculate();
+              }
+              result.add(((List)bigDecimal).get(calculateTableRow-1));
+              continue;
+            }
+          }
+        }
+        Object  bigDecimal = this.calculate(expr,paramVar,calculateTableElement,calculateTableRow);
+        result.add(bigDecimal);
+      }
+      Object bigDecimal = handle.calculate(result);
+      return Objects.nonNull(bigDecimal)?bigDecimal:null;
     }
     return null;
   }
 
   public abstract FunctionEnum func();
 
-  List<BigDecimal> getNumber(Expression expression ,  Map<String, Object> paramVar){
+  Object getNumber(Expression expression ,  Map<String, Object> paramVar){
     Object value = expression.getExpreVar();
-    BigDecimal constant = this.convert(value);
-    if (Objects.nonNull(constant)){
-      return Arrays.asList(constant);
-    }
-    List<BigDecimal> result = new ArrayList<>();
-    if ( expression.getExpreVar() instanceof String){
-      Object object = paramVar.get(expression.getExpreVar());
-      BigDecimal bigDecimal;
-      if (object instanceof Collection){
-        for (Object obj:(Collection)object){
-          bigDecimal = this.convert(obj);
-          if (Objects.nonNull(bigDecimal)){
-            result.add(bigDecimal);
-          }
-        }
-      }else{
-        bigDecimal = this.convert(object);
-        if (Objects.nonNull(bigDecimal)){
-          result.add(bigDecimal);
-        }
+    Object object = null;
+    if (ParamParser.isElementVar(value)){
+      object = paramVar.get(expression.getExpreVar());
+      if (Objects.isNull(object)||!(object instanceof Collection)){
+        return object;
+      }
+    }else{
+      Object constant = ParamParser.convert(value);
+      if (Objects.nonNull(constant)){
+        return constant;
       }
     }
-    if (Objects.isNull(result)){
-      ResultCodeEnum resultCodeEnum = DEFINE_FORM_EXPRE_FUNC_INVALID_PARAM ;
-      throw new BusinessException(resultCodeEnum.message,resultCodeEnum.code);
+    List<Object> result = new ArrayList<>();
+    Object bigDecimal;
+    if (object instanceof Collection){
+      for (Object obj:(Collection)object){
+        bigDecimal = ParamParser.convert(obj);
+        result.add(bigDecimal);
+      }
     }
     return result;
   }
 
-  BigDecimal convert(Object value ){
-    if (Objects.isNull(value)){
-      return null;
+  public List<Object>  convert(Object[] objects){
+    return ParamParser.convert(objects);
+  }
+
+
+  void throwCalculate(){
+    ResultCodeEnum resultCodeEnum = DEFINE_FORM_EXPRE_FUNC_INVALID_PARAM ;
+    throw new BusinessException(resultCodeEnum.message,resultCodeEnum.code);
+  }
+
+  List getObject(List params){
+    List newParams = new ArrayList();
+    for (Object object:params){
+      if (object instanceof Collection ){
+        if (CollectionUtils.isNotEmpty((Collection<?>) object)){
+          newParams.addAll((Collection) object);
+        }
+      }else {
+        newParams.add ( object);
+      }
     }
-    if(value instanceof  Float ){
-      return new BigDecimal((Float) value);
-    }else if ( value instanceof  Double){
-      return new BigDecimal((Double) value);
-    }else if (value instanceof  Integer ){
-      return new BigDecimal((Integer) value);
-    }else if ( value  instanceof  Long){
-      return new BigDecimal((Long) value);
+    return newParams;
+  }
+  List<BigDecimal> getBigDecimal(List params){
+    List<BigDecimal> newParams = new ArrayList();
+    Object convertResult = null;
+    for (Object object:params){
+      if (object instanceof List ){
+        if (((List<?>) object).size()>1){
+          throwCalculate();
+        }
+        convertResult = ParamParser.convert(((List) object).get(0));
+      }else {
+        convertResult = ParamParser.convert(object);
+      }
+      if (Objects.isNull(convertResult)||!(convertResult instanceof BigDecimal)){
+        throwCalculate();
+      }
+      newParams.add ((BigDecimal) convertResult);
     }
-    return null;
+    return newParams;
+  }
+
+  protected void needParamSize(List params,int size){
+    if (CollectionUtils.isEmpty(params)){
+      throwCalculate();
+    }
+    params = (List) params.stream().filter(Objects::nonNull
+    ).collect(Collectors.toList());
+    if (params.size()!=size){
+      throwCalculate();
+    }
   }
 }

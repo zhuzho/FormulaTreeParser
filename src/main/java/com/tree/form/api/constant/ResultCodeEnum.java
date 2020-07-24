@@ -1,0 +1,107 @@
+package com.yunsom.form.api.constant;
+
+/**
+ * @author zhuzhong@yunsom.com
+ * @date 2019-05-10 11:28
+ * @description
+ */
+public enum  ResultCodeEnum {
+
+  COMMON_INVALID_ARG("100005","无效参数"),
+
+  DEFINE_DATASOURCE_LOST("400001","缺少数据源和数据源参数"),
+  DEFINE_INPUT_TYPE_NOT_MATCH("400002","%s输入类型不合法"),
+  DEFINE_GROUP_TITLE("400003","缺少下拉分组"),
+  DEFINE_OPTION("400004","缺少下拉选项"),
+  DEFINE_NAME_REPEAT("400005","字段名称重复[%s]"),
+  DEFINE_GROUP_MUST_TOP_LEVEL("400006","分组只能在最顶层"),
+  DEFINE_PAGE_MUST_TOP_LEVEL("400007","分页只能在最顶层或者第二层"),
+  DEFINE_INVALID_DEFAULT("400008","无效默认值"),
+
+  DEFINE_CHILD_NOT_MATCH("400009","子元素不匹配"),
+
+  DEFINE_FORM_RELATION_ERROR("400010","关联类型错误"),
+  DEFINE_FORM_RELATION_ERROR_PARAM("400011","表单组关联参数错误"),
+  DEFINE_FORM_ELEMENT_NAME_REPEAT("400012","字段名称重复"),
+
+  DEFINE_FORM_NO_ALLOW_CHILD("400013","该%s元素不能有子元素"),
+  DEFINE_FORM_NO_ALLOW_DEFAULT("400014","该元素不能有默认值"),
+  DEFINE_FORM_NO_ALLOW_EXPRESSION("400015","该元素不能计算逻辑"),
+
+
+
+  DEFINE_FORM_EXPRE_FUNC_NOT_EXISTS("400016","无效函数"),
+
+  DEFINE_FORM_EXPRE_FUNC_INVALID_PARAM("400017","函数参数缺失"),
+  DEFINE_FORM_EXPRE_FUNC_ONLY_ONE_ELSE("400018","if else 函数只能有一个else"),
+
+  DEFINE_FORM_EXPRE_GRAMMA_INVALID("400019","无效公式"),
+  DEFINE_FORM_NAME_MISSING("400020","字段名称丢失"),
+
+  DEFINE_FORM_EXPRE_GRAMMA_TYPE_MISSING("400021","公式类型无效"),
+  DEFINE_FORM_NO_ALLOW_CHILD_EMPTY("400022","该元素必须有子元素"),
+  DEFINE_INPUT_TYPE_IS_NULL("400023","输入类型不能为空%s"),
+  BATCH_QUERY_LIMIT("400024","批量查询超过限制"),
+
+  RUNTIME_BEGIN_SHOULD_BEFORE_END("410001","开始时间必须小于结束时间"),
+
+  RUNTIME_INVALID_AGGREGATION("410002","不支持聚合粒度"),
+  DEFINE_FORM_NAME_REPEAT("410003","表单名称重复"),
+
+  DEFINE_FORM_UNIQUE("410004","已存在数据[%s]不能设置唯一性"),
+
+  DEFINE_FORM_UNIQUE_TOO_MANY_COL("410005","唯一性约束字段过多[%d]"),
+  DEFINE_FORM_NOT_EXISTS("410006","表单不存在"),
+  DEFINE_FORM_ADD_REPEAT("410007","请勿重复添加"),
+  DEFINE_FORM_DELETE_DINE("410008","企业无权限删除平台固定数据"),
+  DEFINE_FORM_NUMBER_REPEAT("410009","表单编号重复"),
+  DEFINE_FORM_NUMBER_LOST("410010","表单编号不能为空"),
+  DEFINE_FORM_REFER_LOST("410011","本表单的关联表单尚未添加，[%s]请先添加关联表单"),
+  DEFINE_FORM_UNIQUE_FIXED("410012","该表单已产生数据，不能修改值唯一性校验"),
+  DEFINE_FORM_EMPTY("410013","请至少添加一个字段"),
+  DEFINE_FORM_TOO_MANY_EXTENDED("410014","本表单企业自定义字段不能超过%d个！"),
+  DEFINE_FORM_LIST_ELE_LIMIT("410015","单层级表单字段个数不能超过%d个！（企业定义+平台字段+固定字段）"),
+  DEFINE_FORM_TREE_ELE_LIMIT("410016","多层级表单字段个数不能超过%d个！（企业定义+平台字段+固定字段）"),
+  DEFINE_FORM_ENTERPRISE_LOST("410017","企业ID不能为空！"),
+  DEFINE_FORM_ELEMENT_INVALID("410018","无效字段配置"),
+
+  DEFINE_FORM_UNIQUE_INVALID_ELE("410019","唯一性约束字段必须必填"),
+  DEFINE_FORM_DEFAULT_VALUE("410020","单行文本默认值过长"),
+  DEFINE_FORM_INDEX_TOO_MANY("410021","检索字段不能超过10个"),
+  DEFINE_FORM_UNIQUE_INVALID("410022","无效唯一性约束设置"),
+  DEFINE_FORM_NAME_TOO_LONG("410023","字段名称太长"),
+  DEFINE_FORM_UNIQUE_INVALID_ELE_TYPE("410024","单行文本、数值输入、部门选择(单选)、人员选择(单选)"),
+  DEFINE_FORM_UNIQUE_INVALID_ELE_SUPPORT("410025","唯一主键字段(部门,用户)必须是单选"),
+  DEFINE_FORM_INSTANCE_SUMMARY("410026","数据摘要不能为空"),
+  DEFINE_FORM_INSTANCE_TITLE("410027","数据标题不能为空"),
+
+  DEFINE_FORM_INSTANCE_SUMMARY_INVALID_CONFIG("410028","数据摘要配置无效"),
+  DEFINE_FORM_INSTANCE_TITLE_INVALID_CONFIG("410029","数据标题配置无效"),
+
+
+  DEFINE_FORM_INSTANCE_SUMMARY_CONTAINS_INVALID_ELE("410030","数据摘要配置包含无效字段"),
+  DEFINE_FORM_INSTANCE_TITLE_CONTAINS_INVALID_ELE("410031","数据标题配置包含无效字段"),
+
+  APPLY_FORM_REPEAT_INSTANCE("420001","数据重复:%s"),
+  APPLY_FORM_REPEAT_PLATFORM("420002","与平台数据重复"),
+  APPLY_FORM_REFER_LIMIT("420003","关联查询数量超过200，请缩小查询范围"),
+
+
+  DEFINE_FORM_REPEAT_CASCADING_ELEMENT("500001","同一字段被多个下拉级联暂时未开放"),
+  DEFINE_FORM_TABLE_UNIQUE_ELEMENT_LOST("500002","表格约束字段不存在"),
+  DEFINE_FORM_TABLE_UNIQUE_ELEMENT_REQUIRE("500003","表格约束字段需要必填配置"),
+  DEFINE_FORM_TABLE_CHILD_MISS("500004","表格必须有子元素"),
+  DEFINE_FORM_ENTERPRISE_DEFINE_LIMIT("500005","企业自定义表单数量超过限制"),
+  DEFINE_FORM_UNIQUE_ALL_EMPTY("500006","唯一性约束字段全部为空"),
+  DEFINE_FORM_QUERY_INSTANCE_LIMIT("500007","查询数据超过数量限制"),
+  DEFINE_FORM_CAN_NOT_CAST_TO_NUMBER("500008","无效数字"),
+
+  ;
+  public final String message;
+  public final String code;
+
+  ResultCodeEnum(String code,String message) {
+    this.message = message;
+    this.code = code;
+  }
+}

@@ -1,5 +1,7 @@
 package com.yunsom.form.api.calculate;
 
+import static com.yunsom.form.api.constant.FunctionEnum.RESIDUE;
+
 import com.yunsom.form.api.constant.FunctionEnum;
 import com.yunsom.form.api.util.CollectionUtils;
 import java.math.BigDecimal;
@@ -13,15 +15,22 @@ import java.util.List;
 public class Residue extends MathFunctionHandle{
 
   @Override
-  public BigDecimal calculate(List<BigDecimal> params) {
+  public BigDecimal calculate(List  params) {
     if (CollectionUtils.isEmpty(params) || params.size()!=2){
-      return null;
+      throwCalculate();
     }
-    return params.get(0).remainder(params.get(1));
+    params = getBigDecimal(params);
+    return ((BigDecimal)params.get(0)).remainder((BigDecimal)params.get(1));
   }
 
   @Override
   public FunctionEnum func() {
-    return null;
+    return RESIDUE;
+  }
+
+  @Override
+  public Object executeInner(Object[] objects)  {
+    List<Object> bigDecimals = convert(objects);
+    return this.calculate(bigDecimals);
   }
 }
