@@ -1,12 +1,12 @@
-package com.yunsom.form.api.util;
+package com.tree.form.api.util;
 
-import static com.yunsom.form.api.constant.CommonConstant.INT_YES;
+import static com.tree.form.api.constant.CommonConstant.INT_YES;
 
-import com.yunsom.common.base.exception.BusinessException;
-import com.yunsom.form.api.constant.FuncList;
-import com.yunsom.form.api.constant.InputTypeEnum;
-import com.yunsom.form.api.constant.ResultCodeEnum;
-import com.yunsom.form.api.dto.InstanceQueryConditionDTO;
+import com.tree.common.base.exception.BusinessException;
+import com.tree.form.api.constant.FuncList;
+import com.tree.form.api.constant.InputTypeEnum;
+import com.tree.form.api.constant.ResultCodeEnum;
+import com.tree.form.api.dto.InstanceQueryConditionDTO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,7 +17,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * @author zhuzhong@yunsom.com
+ * @author zhuzhong@tree.com
  * @date 2020-05-28 14:03
  * @description
  */
@@ -42,7 +42,7 @@ public class FormQueryParamBuilder {
         if (Objects.isNull(matchCondition.getVal())
             || (
                   matchCondition.getVal() instanceof Collection
-            && com.yunsom.form.api.util.CollectionUtils.isEmpty( (Collection)matchCondition.getVal())
+            && com.tree.form.api.util.CollectionUtils.isEmpty( (Collection)matchCondition.getVal())
             )
             || matchCondition.getVal().toString().length()==0
         ){
