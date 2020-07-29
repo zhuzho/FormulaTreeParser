@@ -100,9 +100,12 @@ public enum FunctionEnum {
     return null;
   }
 
+  public static List<String> p_m_m_d_r = Arrays.asList(PLUS.method,MINUS.method,MULTIPLY.method,DIVIDE.method,RESIDUE.method);
+
   public static List<String> getDiyFunc(){
     return Arrays.stream(FunctionEnum.values())
         .filter(tt->Objects.nonNull(tt.calculator))
+        .filter(tt->!p_m_m_d_r.contains(tt.method))
         .map(tt->tt.method)
         .collect(Collectors.toList());
   }
